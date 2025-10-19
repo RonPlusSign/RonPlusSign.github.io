@@ -1,0 +1,753 @@
+/* Global box-sizing and smooth scrolling */
+* {
+    box-sizing: border-box;
+}
+
+/* Enable smooth scrolling and proper touch scrolling */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px; /* Account for fixed navigation */
+    /* Webkit smooth scrolling */
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    min-width: 320px;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    max-width: 100vw; /* Prevent content from exceeding viewport width */
+}
+
+/* Ensure main content areas don't interfere with scrolling */
+main,
+section,
+article,
+div {
+    overflow: visible;
+}
+
+/* Specifically ensure no scroll containers are created and prevent width overflow */
+html,
+body {
+    height: auto;
+    max-width: 100%;
+}
+
+/* Ensure all container elements respect viewport width */
+* {
+    max-width: 100%;
+    box-sizing: border-box; /* Ensure padding/borders are included in width calculations */
+}
+
+/* Ensure transformed elements don't cause horizontal scroll */
+.blob {
+    contain: layout; /* Prevent layout changes from affecting document flow */
+}
+
+/* Make sure all anchor links use smooth scrolling */
+a[href^="#"] {
+    scroll-behavior: smooth;
+}
+
+/* Ensure smooth scrolling works for focus navigation as well */
+:focus {
+    scroll-behavior: smooth;
+}
+#theme-toggle,
+#theme-toggle-mobile {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+#theme-toggle:hover,
+#theme-toggle-mobile:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(124, 58, 237, 0.3);
+}
+
+#theme-toggle:active,
+#theme-toggle-mobile:active {
+    transform: scale(0.95);
+}
+
+/* Theme icon animations */
+#theme-icon,
+#theme-toggle-mobile svg {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform: rotate(90deg) scale(1); /* Rotate moon to correct orientation */
+}
+
+/* Rotate and scale animation when switching to light theme */
+body[data-theme="light"] #theme-icon {
+    transform: rotate(-90deg) scale(1.1); /* Sun rotates to different position */
+}
+
+body[data-theme="light"] #theme-toggle-mobile svg {
+    transform: rotate(-90deg) scale(1.1);
+}
+
+/* Dark mode moon in correct orientation */
+body[data-theme="dark"] #theme-icon {
+    transform: rotate(90deg) scale(1);
+}
+
+body[data-theme="dark"] #theme-toggle-mobile svg {
+    transform: rotate(90deg) scale(1);
+}
+
+/* Add a subtle glow effect when switching */
+#theme-toggle.switching,
+#theme-toggle-mobile.switching {
+    animation: themeGlow 0.6s ease-in-out;
+}
+
+@keyframes themeGlow {
+    0%,
+    100% {
+        box-shadow: 0 0 0 rgba(124, 58, 237, 0);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(124, 58, 237, 0.5);
+    }
+}
+
+/* Theme toggle animations */
+#theme-toggle,
+#theme-toggle-mobile {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Add scroll margin to sections to account for fixed navigation */
+section {
+    scroll-margin-top: 80px; /* Consistent margin for better positioning */
+}
+
+#main {
+    scroll-margin-top: 0; /* main doesn't need margin since it's full height */
+}
+
+/* Theme variables (dark default) */
+:root {
+    --bg-gradient: linear-gradient(180deg, #0f1724 0%, #0b1220 100%);
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --card-bg-2: rgba(255, 255, 255, 0.02);
+    --text: #e6eef8;
+    --muted: rgba(230, 238, 248, 0.7);
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-dark: rgba(10, 10, 10, 0.32);
+    --accent-1: #7c3aed;
+    --accent-2: #06b6d4;
+    --card-shadow: 0 8px 20px rgba(2, 6, 23, 0.12);
+    --btn-shadow: 0 6px 18px rgba(2, 6, 23, 0.1);
+}
+
+/* Light theme overrides */
+body[data-theme="light"] {
+    --bg-gradient: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-bg-2: rgba(245, 245, 250, 0.9);
+    --text: #0f172a;
+    --muted: rgba(15, 23, 42, 0.75);
+    --glass: rgba(255, 255, 255, 0.85);
+    --glass-dark: rgba(255, 255, 255, 0.95);
+    --accent-1: #5b21b6;
+    --accent-2: #0891b2;
+    --card-shadow: 0 8px 20px rgba(2, 6, 23, 0.06);
+    --btn-shadow: 0 6px 14px rgba(2, 6, 23, 0.06);
+}
+
+/* Light theme specific button styling */
+body[data-theme="light"] .btn-ghost {
+    border-color: rgba(15, 23, 42, 0.15);
+    background: rgba(255, 255, 255, 0.6);
+}
+body[data-theme="light"] .btn-ghost:hover {
+    background: rgba(15, 23, 42, 0.05);
+    border-color: rgba(15, 23, 42, 0.25);
+    box-shadow: 0 12px 35px rgba(2, 6, 23, 0.08);
+}
+
+/* Apply theme backgrounds & text */
+body {
+    background: var(--bg-gradient);
+    color: var(--text);
+    transition: background 0.45s ease, color 0.35s ease;
+}
+.themed-text {
+    color: var(--text) !important;
+}
+.muted {
+    color: var(--muted) !important;
+}
+.glass {
+    background: var(--glass);
+    backdrop-filter: blur(6px);
+}
+.glass-dark {
+    background: var(--glass-dark);
+    backdrop-filter: blur(6px);
+}
+
+/* Mobile menu specific styling - more opaque for better readability */
+#mobile-menu .glass {
+    background: rgba(0, 0, 0, 0.35) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Light theme mobile menu */
+body[data-theme="light"] #mobile-menu .glass {
+    background: rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Reveal animations */
+.reveal {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+    transition: all 350ms cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* Blob: limited blue/purple palette and subtle movement */
+.blob {
+    filter: blur(22px);
+    opacity: 0.7;
+    transform-origin: center;
+    animation: floaty 10s ease-in-out infinite;
+    contain: layout; /* Prevent layout changes from affecting document flow */
+    position: absolute;
+    pointer-events: none; /* Prevent interaction */
+}
+@keyframes floaty {
+    0% {
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+    25% {
+        transform: translate(min(35px, 5vw), -20px) rotate(3deg);
+    }
+    50% {
+        transform: translate(min(60px, 8vw), -10px) rotate(6deg);
+    }
+    75% {
+        transform: translate(min(35px, 5vw), 18px) rotate(3deg);
+    }
+    100% {
+        transform: translate(0px, 0px) rotate(0deg);
+    }
+}
+
+/* main text contrast improvements */
+.main-title {
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+.main-subtitle {
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Light theme main adjustments */
+body[data-theme="light"] .main-title {
+    text-shadow: 0 2px 8px rgba(255, 255, 255, 0.3), 0 4px 16px rgba(255, 255, 255, 0.2);
+    color: #0f172a !important;
+}
+body[data-theme="light"] .main-subtitle {
+    text-shadow: 0 1px 4px rgba(255, 255, 255, 0.3);
+    color: rgba(15, 23, 42, 0.8) !important;
+}
+
+/* Light theme text adjustments for better contrast */
+body[data-theme="light"] .text-white {
+    color: #0f172a !important;
+}
+body[data-theme="light"] .text-gray-200 {
+    color: rgba(8, 13, 24, 0.75) !important;
+}
+
+/* Profile card mini-cards visibility improvements */
+.profile-mini-card {
+    background: var(--card-bg) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+body[data-theme="light"] .profile-mini-card {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(15, 23, 42, 0.12);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* profile tilt */
+.tilt {
+    transition: transform 0.15s ease-out, box-shadow 0.15s ease;
+    transform-origin: center;
+    box-shadow: var(--card-shadow);
+}
+.tilt:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+/* card styling */
+.card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    background: var(--card-bg);
+    border-radius: 12px;
+}
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: var(--card-shadow);
+}
+
+.project-card.card {
+    transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease !important;
+    background: var(--card-bg) !important;
+}
+.project-card.card:hover {
+    transform: scale(1.03) !important;
+    box-shadow: var(--card-shadow) !important;
+}
+
+/* nav link underline */
+.nav-link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+}
+.nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 0;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    transition: width 0.18s ease;
+    border-radius: 2px;
+}
+.nav-link:hover::after {
+    width: 100%;
+}
+
+/* topbar alignment */
+nav .glass a,
+nav .glass button,
+nav .glass .btn,
+nav a[download] {
+    display: inline-flex;
+    align-items: center;
+    height: 40px;
+}
+
+/* buttons: subtle scale + gradient shift animation */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.44rem 0.9rem;
+    border-radius: 9999px;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-position 0.3s ease;
+    height: 40px;
+    font-weight: 600;
+}
+.btn:active {
+    transform: translateY(1px) scale(0.994);
+}
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text);
+    box-shadow: var(--btn-shadow);
+}
+
+.btn-cta {
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    background-size: 200% 100%;
+    color: white;
+    box-shadow: var(--btn-shadow);
+}
+/* hover: small scale + subtle gradient move */
+.btn-ghost:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(2, 6, 23, 0.15);
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.btn-cta:hover {
+    transform: scale(1.05);
+    background-position: 100% 0;
+    box-shadow: 0 14px 40px rgba(2, 6, 23, 0.12);
+}
+
+/* language chips: subtle scale + light shadow */
+.lang {
+    font-size: 0.72rem;
+    padding: 6px 8px;
+    border-radius: 999px;
+    color: white;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 6px 14px rgba(2, 6, 23, 0.08);
+    transform: scale(1);
+    transition: transform 0.12s, box-shadow 0.12s;
+}
+.lang:hover {
+    transform: scale(1.08);
+    box-shadow: 0 12px 28px rgba(2, 6, 23, 0.12);
+}
+
+/* language colors */
+.lang-python {
+    background: linear-gradient(90deg, #2f6c9e, #e4bb26);
+    color: #ffffff;
+}
+.lang-javascript {
+    background: linear-gradient(90deg, #f0db4f, #f7df1e);
+    color: #1a1a1a;
+}
+.lang-typescript {
+    background: linear-gradient(90deg, #3178c6, #2359b3);
+}
+.lang-cpp {
+    background: linear-gradient(90deg, #00599c, #004482);
+}
+.lang-html {
+    background: linear-gradient(90deg, #e44d26, #f16529);
+}
+.lang-css {
+    background: linear-gradient(90deg, #264de4, #2965f1);
+}
+.lang-unity {
+    background: linear-gradient(90deg, #1e1e1e, #343434);
+}
+.lang-angular {
+    background: linear-gradient(90deg, #dd0031, #ff4569);
+}
+.lang-laravel {
+    background: linear-gradient(90deg, #ff2d20, #ff6b4a);
+}
+.lang-sql {
+    background: linear-gradient(90deg, #336791, #4a9eff);
+}
+.lang-vue {
+    background: linear-gradient(90deg, #4fc08d, #42b883);
+}
+.lang-php {
+    background: linear-gradient(90deg, #777bb4, #8892bf);
+}
+.lang-pytorch {
+    background: linear-gradient(90deg, #ee4c2c, #ff6b4a);
+}
+.lang-django {
+    background: linear-gradient(90deg, #092e20, #2e7d32);
+}
+.lang-mongodb {
+    background: linear-gradient(90deg, #4db33d, #3fba4d);
+}
+.lang-node {
+    background: linear-gradient(90deg, #3c873a, #68a063);
+}
+.lang-docker {
+    background: linear-gradient(90deg, #0db7ed, #2496ed);
+}
+.lang-tableau {
+    background: linear-gradient(90deg, #e97627, #f28c2b);
+}
+.lang-flask {
+    background: linear-gradient(90deg, #000000, #4b4b4b);
+}
+.lang-flutter {
+    background: linear-gradient(90deg, #02569b, #0288d1);
+}
+.lang-llms {
+    background: linear-gradient(90deg, #7c3aed, #06b6d4);
+}
+.lang-rl {
+    background: linear-gradient(90deg, #f59e0b, #ef4444);
+}
+.lang-java { 
+    background: linear-gradient(90deg, #007396, #e53525);
+}
+.lang-maven {
+    background: linear-gradient(90deg, #f05133, #7c3aed);
+}
+.lang-huggingface {
+    background: linear-gradient(90deg, #f5a623, #f8d01c);
+}
+.lang-rlbench {
+    background: linear-gradient(90deg, #10b981, #3b82f6);
+}
+.lang-lerobot {
+    background: linear-gradient(90deg, #ef4444, #f59e0b);
+}
+.lang-jupyter {
+    background: linear-gradient(90deg, #f37626, #f9a03c);
+}
+.lang-rust {
+    background: linear-gradient(90deg, #df7a40, #d64021);
+}
+.lang-c {
+    background: linear-gradient(90deg, #00599c, #004482);
+}
+.lang-asm {
+    background: linear-gradient(90deg, #6e5494, #8b5cf6);
+}
+.lang-kotlin {
+    background: linear-gradient(90deg, #7f52ff, #ff6f61);
+}
+.lang-android {
+    background: linear-gradient(90deg, #3ddc84, #a4c639);
+}
+.lang-linux {
+    background: linear-gradient(90deg, #0b0b0b, #c98900);
+}
+.lang-git {
+    background: linear-gradient(90deg, #f34f29, #d73c1e);
+}
+.lang-arduino {
+    background: linear-gradient(90deg, #00979d, #6ad7d9);
+}
+.lang-notion {
+    background: linear-gradient(90deg, #111111, #2f2f2f);
+}
+.lang-latex {
+    background: linear-gradient(90deg, #017a79, #1a9a9a);
+}
+.lang-photoshop {
+    background: linear-gradient(90deg, #31a8ff, #0a74d6);
+}
+.lang-photography {
+    background: linear-gradient(90deg, #ff7e5f, #feb47b);
+}
+
+/* top progress bar */
+#progress {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+    width: 0%;
+    z-index: 60;
+    transition: width 0.1s linear;
+}
+
+/* subtle focus outline for accessibility */
+a:focus {
+    outline: 2px dashed rgba(124, 58, 237, 0.18);
+    outline-offset: 4px;
+}
+
+/* mobile menu centering */
+#mobile-menu .menu-inner {
+    text-align: center;
+}
+#mobile-menu .menu-inner a {
+    display: block;
+    width: 100%;
+}
+
+/* Profile card button customizations - square buttons */
+#profile-card .btn {
+    border-radius: 8px; /* Square/rounded corners instead of fully round */
+    padding: 0;
+}
+
+/* Smooth transitions for profile images when theme changes */
+img[src*="profile"] {
+    transition: opacity 0.4s ease-in-out;
+}
+
+/* Profile card layout - stack profile picture and name vertically */
+#profile-card .flex.flex-col.sm\\:flex-row {
+    flex-direction: column !important; /* Always vertical, override sm:flex-row */
+    text-align: center; /* Center everything */
+}
+
+/* Mobile menu animations - ensure smooth scrolling */
+#mobile-menu {
+    position: absolute;
+    top: 100%;
+    left: 1rem;
+    right: 1rem;
+    z-index: 30;
+    transition: all 0.2s ease-in-out;
+    transform-origin: top center;
+    overflow: visible;
+    max-height: 500px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+/* Mobile menu inner container - ensure it doesn't exceed screen width */
+#mobile-menu .menu-inner {
+    max-width: calc(100vw - 2rem);
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* Prevent horizontal overflow on mobile */
+@media (max-width: 480px) {
+    #mobile-menu {
+        left: 0.75rem;
+        right: 0.75rem;
+    }
+
+    #mobile-menu .menu-inner {
+        max-width: calc(100vw - 1.5rem);
+        padding: 0.75rem;
+    }
+}
+
+/* Center the final project card when there's an odd count on wide screens */
+/* @media (min-width: 1024px) {
+    .projects-grid > .project-card:last-child {
+        grid-column: 1 / -1;
+        justify-self: center;
+        max-width: 32rem;
+        width: 100%;
+    }
+} */
+
+/* Override Tailwind's hidden class for mobile menu */
+#mobile-menu.hidden {
+    max-height: 0 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: block !important;
+}
+
+/* Mobile menu box (glass container) animation (slide down) */
+#mobile-menu .menu-inner {
+    transition: all 0.2s ease-out;
+    transform: translateY(-10px);
+    opacity: 0;
+}
+
+#mobile-menu:not(.hidden) .menu-inner {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Stagger animation for menu links */
+#mobile-menu a {
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+#mobile-menu:not(.hidden) a:nth-child(1) {
+    animation: slideInLeft 0.3s ease 0.1s both;
+}
+#mobile-menu:not(.hidden) a:nth-child(2) {
+    animation: slideInLeft 0.3s ease 0.15s both;
+}
+#mobile-menu:not(.hidden) a:nth-child(3) {
+    animation: slideInLeft 0.3s ease 0.2s both;
+}
+#mobile-menu:not(.hidden) a:nth-child(4) {
+    animation: slideInLeft 0.3s ease 0.25s both;
+}
+#mobile-menu:not(.hidden) a:nth-child(5) {
+    animation: slideInLeft 0.3s ease 0.3s both;
+}
+#mobile-menu:not(.hidden) a:nth-child(6) {
+    animation: slideInLeft 0.3s ease 0.35s both;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* small-screen tweaks */
+@media (max-width: 640px) {
+    .blob {
+        display: block;
+        opacity: 0.85;
+    }
+
+    /* Better mobile spacing */
+    .main-title {
+        font-size: 2rem !important;
+        line-height: 1.2;
+    }
+
+    /* Profile card adjustments */
+    #profile-card {
+        padding: 1rem !important;
+    }
+
+    /* Button improvements */
+    .btn {
+        font-size: 0.875rem;
+        padding: 0.5rem 0.75rem;
+    }
+
+    /* Language chips smaller on mobile */
+    .lang {
+        font-size: 0.65rem;
+        padding: 4px 6px;
+    }
+
+    /* Better section spacing */
+    section {
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
+    }
+}
+
+/* Medium screens */
+@media (min-width: 641px) and (max-width: 1024px) {
+    /* Ensure good spacing on tablets */
+    .main-title {
+        font-size: 3rem;
+    }
+
+    /* Profile card stays readable */
+    .profile-mini-card {
+        padding: 0.5rem;
+    }
+}
+
+.project-hidden {
+    display: none !important;
+}
+
+.project-reveal {
+    animation: projectCardReveal 320ms cubic-bezier(0.22, 0.68, 0, 1) both;
+}
+
+@keyframes projectCardReveal {
+    0% {
+        opacity: 0;
+        transform: translateY(18px) scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@media (min-width: 1024px) {
+    #load-more-projects {
+        display: none !important;
+    }
+}

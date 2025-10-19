@@ -1,45 +1,706 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1"><link rel=icon href=/favicon.ico><title>andreadelli</title><link href="https://fonts.googleapis.com/css2?family=Muli:wght@200&display=swap" rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css><style>* {
-      font-family: "Muli", sans-serif;
-    }
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+        <title>Andrea Delli - AI Engineer</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="styles.css" />
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    </head>
 
-    /* Scrollbar style */
-    ::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
-    }
+    <body data-theme="dark" class="antialiased themed-text">
 
-    ::-webkit-scrollbar-button {
-      width: 0px;
-      height: 0px;
-    }
+        <!-- scroll progress -->
+        <div id="progress"></div>
 
-    ::-webkit-scrollbar-thumb {
-      background: #e6e6e6;
-      border: 0px none #ffffff;
-      border-radius: 6px;
-    }
+        <!-- Canvas particle background -->
+        <canvas id="bg-canvas" class="fixed inset-0 -z-10"></canvas>
 
-    ::-webkit-scrollbar-thumb:hover {
-      background: #ffffff;
-    }
+        <!-- NAV -->
+        <nav class="fixed w-full z-40 top-2 sm:top-4 left-0 px-4 sm:px-6">
+            <div class="max-w-6xl mx-auto flex items-center justify-between">
+                <div class="flex rounded-full glass px-2 pr-3 py-1 md:py-2">
+                    <a href="#main" class="btn p-0 flex items-center gap-2 sm:gap-3">
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden ring-2 ring-white/12">
+                            <img src="assets/profile.jpg" alt="Andrea" class="w-full h-full object-cover" />
+                        </div>
+                        <span class="font-semibold themed-text text-sm sm:text-base">Andrea Delli</span>
+                    </a>
+                </div>
+                <div class="hidden md:flex items-center gap-4 px-4 py-2 rounded-full glass">
+                    <a href="#about" class="nav-link text-sm themed-text p-0">About</a>
+                    <a href="#experience" class="nav-link text-sm themed-text p-0">Experience</a>
+                    <a href="#education" class="nav-link text-sm themed-text p-0">Education</a>
+                    <a href="#projects" class="nav-link text-sm themed-text p-0">Projects</a>
+                    <a href="#contact" class="nav-link text-sm themed-text p-0">Contact</a>
+                    <a href="assets/cv.pdf" target="_blank" class="text-sm btn btn-cta">Download CV</a>
+                    <button id="theme-toggle" aria-label="Toggle theme" class="w-10 h-10 p-2 rounded-full glass flex items-center justify-center" title="Toggle light/dark">
+                        <svg id="theme-icon" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <!-- <path id="theme-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1M18.36 5.64l-.7.7M6.34 17.66l-.7.7M18.36 18.36l-.7-.7M6.34 6.34l-.7-.7M12 5a7 7 0 100 14 7 7 0 000-14z"/> -->
+                            <path id="theme-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4V2m0 20v-2m8-8h2M2 12h2m15.07 7.07l1.41 1.41M4.93 4.93L3.52 3.52m0 16.96l1.41-1.41M19.07 4.93l1.41-1.41M12 8a4 4 0 100 8 4 4 0 000-8z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="md:hidden flex items-center gap-2">
+                    <button id="mobile-toggle" class="w-10 h-10 p-2 bg-white/6 rounded-full glass flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                    <button id="theme-toggle-mobile" aria-label="Toggle theme" class="w-10 h-10 p-2 bg-white/6 rounded-full glass flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path id="theme-path-mobile" d="M12 3v1m0 16v1m8.66-9h-1M4.34 12h-1M18.36 5.64l-.7.7M6.34 17.66l-.7.7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div id="mobile-menu" class="md:hidden mt-3 hidden">
+                <div class="mx-auto max-w-sm p-4 rounded-xl glass menu-inner">
+                    <a href="#about" class="block py-2 themed-text">About</a>
+                    <a href="#experience" class="block py-2 themed-text">Experience</a>
+                    <a href="#education" class="block py-2 themed-text">Education</a>
+                    <a href="#projects" class="block py-2 themed-text">Projects</a>
+                    <a href="#contact" class="block py-2 themed-text">Contact</a>
+                    <a href="assets/cv.pdf" target="_blank" class="mt-2 inline-block btn btn-cta">Download CV</a>
+                </div>
+            </div>
+        </nav>
 
-    ::-webkit-scrollbar-thumb:active {
-      background: #ffffff;
-    }
+        <!-- MAIN -->
+        <header id="main" class="min-h-screen flex items-center justify-center text-center px-4 sm:px-6 pt-20 sm:pt-24 pb-8 sm:pb-12">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-10 items-center">
+                <!-- Main description -->
+                <div class="space-y-6">
+                    <div class="relative inline-block">
+                        <div class="absolute -inset-12 -z-10">
+                            <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" class="w-full blob">
+                                <defs>
+                                    <linearGradient id="g1" x1="0" x2="1">
+                                        <stop offset="0%" stop-color="#6d28d9" />
+                                        <stop offset="100%" stop-color="#06b6d4" />
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#g1)" d="M421.4,315.5Q391,381,318,392.5Q245,404,188.5,358.5Q132,313,94.5,246.5Q57,180,88.5,113.5Q120,47,188.5,29Q257,11,322.5,38Q388,65,430,117.5Q472,170,437,245Q402,320,421.4,315.5Z"/>
+                            </svg>
+                        </div>
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl font-black leading-tight text-white main-title">Andrea Delli</h1>
+                        <p class="mt-2 text-gray-200 text-xl font-bold main-subtitle">MSc Student & AI Engineer</p>
+                    </div>
+                    <p class="text-gray-200 text-base md:text-lg max-w-xl mx-auto md:mx-0">
+                        Master’s student in AI and Data Analytics focusing on generative AI and robotics,
+                        combining full-stack development experience with hands-on work in a space-exploration robotics team.
+                    </p>
+                    <div class="flex items-center justify-center gap-3">
+                        <a href="assets/cv.pdf" target="_blank" class="btn btn-cta">Download CV</a>
+                        <a href="https://github.com/RonPlusSign" target="_blank" class="btn btn-ghost">GitHub</a>
+                    </div>
+                </div>
 
-    ::-webkit-scrollbar-track {
-      background: #8f8f8f;
-      border: 0px none #ffffff;
-    }
+                <!-- Profile Card -->
+                <div class="mx-auto w-full md:max-w-sm">
+                    <div id="profile-card" class="tilt p-4 sm:p-6 glass-dark card">
+                        <div class="flex flex-col items-center gap-4 text-center">
+                            <img src="assets/profile.jpg" alt="Andrea" class="w-64 h-64 rounded-full border-2 border-white/10 object-cover" />
+                            <div class="text-sm muted">Based in Turin, Italy<br>Available for projects & collaborations</div>
+                        </div>
+                        <div class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div class="p-2 sm:p-3 rounded-lg text-center card profile-mini-card">
+                                <div class="text-sm font-semibold themed-text">Genomedics</div>
+                                <div class="text-xs muted">AI Engineer & Full Stack Developer</div>
+                            </div>
+                            <div class="p-2 sm:p-3 rounded-lg text-center card profile-mini-card">
+                                <div class="text-sm font-semibold themed-text">Team DIANA</div>
+                                <div class="text-xs muted">Coordinator & Software Engineer</div>
+                            </div>
+                            <div class="p-2 sm:p-3 rounded-lg text-center card profile-mini-card">
+                                <div class="text-sm font-semibold themed-text">BSc in Computer Science</div>
+                                <div class="text-xs muted">110 with Honours</div>
+                            </div>
+                            <div class="p-2 sm:p-3 rounded-lg text-center card profile-mini-card">
+                                <div class="text-sm font-semibold themed-text">MSc in AI and Data Analytics</div>
+                                <div class="text-xs muted">In Progress</div>
+                            </div>
+                        </div>
+                        <div class="mt-5 flex gap-2 justify-center">
+                            <a href="mailto:andrea.delli2001@gmail.com" class="flex-1 inline-flex items-center justify-center px-3 py-1 rounded-lg border border-white/8 glass btn btn-ghost text-sm" >
+                              Email
+                            </a>
+                            <a href="https://github.com/RonPlusSign" target="_blank" class="w-10 h-10 rounded-lg flex items-center justify-center border border-white/8 glass btn btn-ghost p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-6 sm:h-6 themed-text" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                                </svg>
+                            </a>
+                            <a href="https://www.linkedin.com/in/andrea-delli" target="_blank" class="w-10 h-10 rounded-lg flex items-center justify-center border border-white/8 glass btn btn-ghost p-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5 themed-text" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    ::-webkit-scrollbar-track:hover {
-      background: #8f8f8f;
-    }
+        <!-- ABOUT -->
+        <main class="space-y-8">
+            <section id="about" class="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 reveal">
+                <div class="grid md:grid-cols-3 gap-6 items-start">
+                    <div class="md:col-span-2">
+                        <h2 class="text-xl sm:text-2xl font-bold mb-3 themed-text">About me</h2>
+                        <p class="muted leading-relaxed text-base md:text-lg">
+                            I’m a master’s student in Artificial Intelligence and Data Analytics at the Polytechnic of Turin, focusing on generative AI and robotics. I have hands-on experience as a
+                            full-stack developer for healthcare solutions, and I’m currently exploring agentic systems and multimodal LLM integrations.
+                            I coordinate a team of developers within a university student team, where we design and build a space-exploration rover to compete in international robotics competitions.
+                        </p>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="p-4 rounded-xl card glass">
+                            <div class="text-sm muted">Location</div>
+                            <div class="font-semibold themed-text">Turin, Italy</div>
+                        </div>
+                        <div class="p-4 rounded-xl card glass">
+                            <div class="text-sm muted">Email</div>
+                            <div class="font-semibold themed-text">andrea.delli2001@gmail.com</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-    ::-webkit-scrollbar-track:active {
-      background: #8f8f8f;
-    }
+            <!-- WORK EXPERIENCE -->
+            <section id="experience" class="py-8 sm:py-12 reveal">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-6 themed-text">Work Experience</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="md:col-span-2 space-y-6">
 
-    ::-webkit-scrollbar-corner {
-      background: transparent;
-    }</style><link href=/css/contact.be326d65.css rel=prefetch><link href=/css/gallery.1683ae8d.css rel=prefetch><link href=/js/contact.f73040fa.js rel=prefetch><link href=/js/gallery.55e3611e.js rel=prefetch><link href=/css/app.1670933e.css rel=preload as=style><link href=/css/chunk-vendors.4ed695ed.css rel=preload as=style><link href=/js/app.43d6163e.js rel=modulepreload as=script><link href=/js/chunk-vendors.ca35e40d.js rel=modulepreload as=script><link href=/css/chunk-vendors.4ed695ed.css rel=stylesheet><link href=/css/app.1670933e.css rel=stylesheet></head><body><noscript><strong>We're sorry but andreadelli doesn't work properly without JavaScript enabled. Please enable it to continue.</strong></noscript><div id=app></div><script type=module src=/js/chunk-vendors.ca35e40d.js></script><script type=module src=/js/app.43d6163e.js></script><script>!function(){var e=document,t=e.createElement("script");if(!("noModule"in t)&&"onbeforeload"in t){var n=!1;e.addEventListener("beforeload",function(e){if(e.target===t)n=!0;else if(!e.target.hasAttribute("nomodule")||!n)return;e.preventDefault()},!0),t.type="module",t.src=".",e.head.appendChild(t),t.remove()}}();</script><script src=/js/chunk-vendors-legacy.816bc51c.js nomodule></script><script src=/js/app-legacy.ac7899b2.js nomodule></script></body></html>
+                            <!-- Genomedics -->
+                            <article class="p-6 rounded-2xl card glass">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold themed-text">AI Engineer & Full Stack Developer</h3>
+                                    <span>Oct 2020 - Present</span>
+                                </div>
+                                <div class="text-sm muted">Genomedics S.r.l.</div>
+
+                                <p class="mt-2 muted">
+                                    Development of web platforms for pre-processing, big data analysis, advanced data extraction and indicators in the medical field. Use of LLM agents for automated
+                                    decision support, RAG and cost monitoring.
+                                </p>
+
+                                <div class="mt-3">
+                                    <span class="lang lang-python">Python</span>
+                                    <span class="lang lang-llms">LLMs</span>
+                                    <span class="lang lang-angular">Angular</span>
+                                    <span class="lang lang-laravel">Laravel</span>
+                                    <span class="lang lang-sql">SQL</span>
+                                </div>
+                            </article>
+
+                            <!-- Team DIANA -->
+                            <article class="p-6 rounded-2xl card glass">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold themed-text">Software Engineer</h3>
+                                    <span>Oct 2023 - Present</span>
+                                </div>
+                                <div class="text-sm muted">Team DIANA, Polytechnic of Turin</div>
+                                
+                                <p class="mt-2 muted">Coordinator of a developer group of the DIANA Student’s Team for the development of a rover for space missions,
+                                    with a focus on sensor fusion, positional tracking and creation of a simulation environment.</p>
+
+                                <div class="mt-2">
+                                    <span class="lang lang-cpp">C++</span>
+                                    <span class="lang lang-python">Python</span>
+                                    <span class="lang lang-unity">Unity</span>
+                                </div>
+                            </article>
+
+                            <!-- ITIS A. Meucci -->
+                            <article class="p-6 rounded-2xl card glass">
+                                <div class="flex items-start justify-between">
+                                    <h3 class="font-semibold themed-text">Web Developer</h3>
+                                    <span>2018 - 2020</span>
+                                </div>
+                                <div class="text-sm muted">ITIS A. Meucci</div>
+
+                                <p class="mt-2 muted">Creation of an innovative website for the management and interactive display of school timetables and teacher substitutions (<a href="https://scuolafacile.itismeucci.it" target="_blank">scuolafacile.itismeucci.it</a>).</p>
+
+                                <div class="mt-2">
+                                    <span class="lang lang-vue">Vue.js</span>
+                                    <span class="lang lang-php">PHP</span>
+                                </div>
+                            </article>
+
+                            <!-- Sesa -->
+                            <article class="p-6 rounded-2xl card glass">
+                                <div class="flex items-start justify-between">
+                                    <h3 class="font-semibold themed-text">Internship</h3>
+                                    <span>May 2019</span>
+                                </div>
+                                <div class="text-sm muted">Sesa s.p.a.</div>
+
+                                <p class="mt-2 muted">Training course focused on the design and implementation of web platforms for big data analysis through dynamic dashboards. Independent study of methods for creating mobile apps.</p>
+
+                                <div class="mt-2">
+                                    <span class="lang lang-tableau">Tableau</span>
+                                    <span class="lang lang-flask">Flask</span>
+                                    <span class="lang lang-flutter">Flutter</span>
+                                </div>
+                            </article>
+                        </div>
+                        <aside class="space-y-4">
+                            <div class="p-6 rounded-2xl card glass">
+                                <h4 class="font-semibold themed-text uppercase mb-4">Skills & Tools</h4>
+                                <div class="mt-2 space-y-8">
+                                    <div>
+                                        <div class="text-xs uppercase tracking-wide muted">Coding</div>
+                                        <div class="mt-1 flex flex-wrap gap-2">
+                                            <span class="lang lang-python">Python</span>
+                                            <span class="lang lang-javascript">JavaScript</span>
+                                            <span class="lang lang-typescript">TypeScript</span>
+                                            <span class="lang lang-php">PHP</span>
+                                            <span class="lang lang-cpp">C++</span>
+                                            <span class="lang lang-c">C</span>
+                                            <span class="lang lang-rust">Rust</span>
+                                            <span class="lang lang-sql">SQL</span>
+                                            <span class="lang lang-java">Java</span>
+                                            <span class="lang lang-kotlin">Kotlin</span>
+                                            <span class="lang lang-html">HTML</span>
+                                            <span class="lang lang-css">CSS</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs uppercase tracking-wide muted">Frameworks</div>
+                                        <div class="mt-1 flex flex-wrap gap-2">
+                                            <span class="lang lang-angular">Angular</span>
+                                            <span class="lang lang-laravel">Laravel</span>
+                                            <span class="lang lang-pytorch">PyTorch</span>
+                                            <span class="lang lang-android">Android</span>
+                                            <span class="lang lang-django">Django</span>
+                                            <span class="lang lang-mongodb">MongoDB</span>
+                                            <span class="lang lang-node">Node.js</span>
+                                            <span class="lang lang-vue">Vue.js</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="text-xs uppercase tracking-wide muted">Other</div>
+                                        <div class="mt-1 flex flex-wrap gap-2">
+                                            <span class="lang lang-linux">Linux</span>
+                                            <span class="lang lang-git">Git</span>
+                                            <span class="lang lang-docker">Docker</span>
+                                            <span class="lang lang-arduino">Arduino</span>
+                                            <span class="lang lang-notion">Notion</span>
+                                            <span class="lang lang-latex">LaTeX</span>
+                                            <span class="lang lang-photoshop">Photoshop</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EDUCATION -->
+            <section id="education" class="py-8 sm:py-12 reveal">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-6 themed-text">Education</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="md:col-span-2 space-y-4">
+                            <div class="p-6 rounded-2xl card glass">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold themed-text">MSc in Artificial Intelligence and Data Analytics</h3>
+                                    <span>Oct 2023 - Present</span>
+                                </div>
+                                <div class="text-sm muted">Polytechnic of Turin</div>
+                                <p class="mt-2 muted">Advanced training in machine learning, deep learning, natural language processing (NLP),
+                                    computer vision and big data analytics. Deepening of reinforcement learning techniques, blockchain and mobile
+                                    application development, with a focus on advanced AI models, including large language models. Current GPA: 28.6/30.</p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl card glass">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold themed-text">BSc in Computer Engineering</h3>
+                                    <span>Aug 2020 - Sep 2023</span>
+                                </div>
+                                <div class="text-sm muted">University of Florence</div>
+                                <p class="mt-2 muted">
+                                    Final mark: 110/110 with honors. Thesis: “Analysis and evolution of a software for constrained and dynamic routing on mobility data in a Smart City”
+                                    (<a href="https://github.com/RonPlusSign/whatif-router" target="_blank">github.com/RonPlusSign/whatif-router</a>)
+                                </p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl card glass">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold themed-text">I.T. Diploma</h3>
+                                    <span>Aug 2015 - Jun 2020</span>
+                                </div>
+                                <div class="text-sm muted">ITIS A. Meucci</div>
+                                <p class="mt-2 muted">Final mark: 100/100</p>
+                            </div>
+
+                            <div class="p-6 rounded-2xl card glass">
+                                <div class="flex justify-between">
+                                    <h3 class="font-semibold themed-text">CyberChallenge</h3>
+                                    <span>Feb 2019 - May 2019</span>
+                                </div>
+                                <div class="text-sm muted">University of Florence</div>
+                                <p class="mt-2 muted">First Italian cybersecurity training program with courses on cybersecurity
+                                    and ethical hacking for talented young people from high schools and universities.</p>
+                            </div>
+                        </div>
+                        <aside class="space-y-4">
+                            <!-- CERTIFICATES -->
+                            <div class="p-6 rounded-2xl card glass">
+                                <h3 class="font-semibold themed-text uppercase mb-2">Certificates</h3>
+                                <div class="space-y-4">
+                                    <!-- Cambridge Certificate -->
+                                    <div class="flex items-start gap-3">
+                                        <a href="https://www.cambridgeenglish.org/exams-and-tests/first/" target="_blank">
+                                            <div class="font-semibold themed-text">Cambridge B2 FCE</div>
+                                            <div class="text-xs muted">ID: C4570374</div>
+                                            <div class="text-sm muted">Final score: 182 (CEFR Level: C1)</div>
+                                        </a>
+                                    </div>
+                                    <!-- SpaceCert -->
+                                    <div class="flex items-start gap-3">
+                                        <a href="https://spacecert.org/25N995S7" target="_blank">
+                                            <div class="font-semibold themed-text">SpaceCert</div>
+                                            <div class="text-xs">European Space Foundation</div>
+                                            <div class="text-xs muted">ID: 25N995S7</div>
+                                        </a>
+                                    </div>
+                                    <!-- ICDL -->
+                                    <div class="flex items-start gap-3">
+                                        <div>
+                                            <div class="font-semibold themed-text">ICDL Exams</div>
+                                            <div class="text-xs muted">ID: IT 2308571</div>
+                                            <div class="text-sm muted">Computer Essentials, Online Essentials, Word Processing, Online Collaboration, IT-Security</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- LANGUAGES -->
+                            <div class="p-6 rounded-2xl card glass">
+                                <h4 class="font-semibold themed-text uppercase">Languages</h4>
+                                <div class="mt-2 space-y-2">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm themed-text">Italian</span>
+                                        <span class="text-xs muted">Native</span>
+                                    </div>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-sm themed-text">English</span>
+                                        <span class="text-xs muted">C1 (Advanced)</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </aside>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROJECTS -->
+            <section id="projects" class="py-8 sm:py-12 reveal">
+                <div class="max-w-5xl mx-auto px-4 sm:px-6">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-6 themed-text">Projects & Publications</h2>
+                    
+                    <!-- Simulation-Driven Development Publication -->
+                    <div class="p-6 rounded-2xl project-card card glass mb-6" style="background: var(--card-bg)">
+                        <div class="flex items-start justify-between">
+                            <div>
+                                <div class="text-sm text-indigo-200 uppercase">Publication (IAC 2025)</div>
+                                <div class="font-semibold themed-text mt-1">Simulation-Driven Development: Training, Testing, and Mission Planning for Planetary Rovers</div>
+                                <div class="text-sm muted mt-2">Unity simulator for Team DIANA’s rovers to support operator training, software and hardware validation, and autonomous mission planning.
+                                    Using Nvidia PhysX, it accurately models rover dynamics and supports both standard and VR interfaces.
+                                    Through Software-in-the-Loop and Hardware-in-the-Loop modes, it enables realistic testing of software modules and hardware behavior.
+                                    The simulator also allows mission design, execution, and analysis,
+                                    serving as a comprehensive tool to enhance development, operator readiness, and mission reliability.</div>
+                            </div>
+                            <div class="flex flex-col items-end gap-2">
+                                <a href="https://iafastro.directory/iac/paper/id/97851/summary/" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                        <polyline points="15 3 21 3 21 9"></polyline>
+                                        <line x1="10" y1="14" x2="21" y2="3"></line>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    <div id="projects-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-6 projects-grid">
+                        <!-- Master's Thesis (VLA) -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="text-sm text-indigo-200 uppercase">Master's Thesis</div>
+                                    <div class="font-semibold themed-text mt-1">Vision-Language-Action models for robotic manipulation</div>
+                                    <div class="text-sm muted mt-2">
+                                        Explore the capabilities of state-of-the-art Vision-Language-Action (VLA) models for robotic manipulation tasks
+                                        inside the RLBench simulator, using the Franka robotic arm.
+                                    </div>
+                                     <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-python">Python</span>
+                                        <span class="lang lang-pytorch">PyTorch</span>
+                                        <span class="lang lang-huggingface">Hugging Face</span>
+                                        <span class="lang lang-rlbench">RLBench</span>
+                                        <span class="lang lang-lerobot">LeRobot</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="https://github.com/RonPlusSign/RLBench" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bachelor's Thesis (VLA) -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="text-sm text-indigo-200 uppercase">Bachelor's Thesis</div>
+                                    <div class="font-semibold themed-text mt-1">Analysis and evolution of a software for
+                                        constrained and dynamic routing on mobility data in a Smart City</div>
+                                    <div class="text-sm muted mt-2">
+                                         Extend the GraphHopper routing engine to support dynamic constraints to route vehicles through a road network, including blocked areas and optionally considering the traffic data to weight the map edges.
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-java">Java</span>
+                                        <span class="lang lang-maven">Maven</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="assets/projects/bachelor_thesis.pdf" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Download PDF">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="https://github.com/RonPlusSign/whatif-router" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- LLMs4Subjects -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">LLMs4Subjects</div>
+                                     <div class="text-sm muted mt-2">
+                                        SemEval 2025 Task #5 on automated bilingual subject tagging of technical documents for a national techical library.
+                                        Compared three methods: pre-trained embedding retrieval, fine-tuned embedding models, binary classifier.
+                                     </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-python">Python</span>
+                                        <span class="lang lang-pytorch">PyTorch</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="assets/projects/llms4subjects.pdf" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Download Report">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="https://github.com/RonPlusSign/llms4subjects" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Robot Learning Labs -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">Robot Learning</div>
+                                    <div class="text-sm muted mt-2">
+                                        Reinforcement Learning techniques applied to different environments (CartPole, Hopper, Walker2D),
+                                        ranging from classical control methods to deep RL approaches and finally to sim-to-real transfer challenges.
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-python">Python</span>
+                                        <span class="lang lang-rl">Reinforcement Learning</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="assets/projects/sim2real_rl.pdf" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Download Report">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="https://github.com/RonPlusSign/RobotLearningLabs" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chronos -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">Chronos for Multivariate Time Series Forecasting of Financial Data</div>
+                                    <div class="text-sm muted mt-2">Apply Chronos, a time series forecasting library, to multivariate distributions.
+                                        Analysis of various methods to pre-process, post-process, and fine-tune Chronos for multivariate financial time series data,
+                                        ultimately applied to a simple trading bot.
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-python">Python</span>
+                                        <span class="lang lang-jupyter">Jupyter</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="assets/projects/chronos.pdf" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Download Report">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="https://github.com/RonPlusSign/Chronos-timeseries-forecasting" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AnomalySegmentation -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">Real-Time Anomaly Segmentation for Road Scenes</div>
+                                    <div class="text-sm muted mt-2">
+                                        Anomaly detection in driving environments: evaluation of lightweight segmentation networks,
+                                        comparison of several anomaly scoring methods and enhancements (temperature scaling, void classifiers, loss functions).
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-python">Python</span>
+                                        <span class="lang lang-pytorch">PyTorch</span>
+                                        <span class="lang lang-jupyter">Jupyter</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="assets/projects/anomaly_segmentation.pdf" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Download Report">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                        </svg>
+                                    </a>
+                                    <a href="https://github.com/RonPlusSign/AnomalySegmentation" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EmergencyBackup -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">Rust back-up tool for emergency situations</div>
+                                    <div class="text-sm muted mt-2">
+                                        A tool for backing up important data when the display is not available, using mouse movements.
+                                        Built with Rust for performance and reliability, with a GUI for configuration.
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-rust">Rust</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="https://github.com/RonPlusSign/EmergencyBackup" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quoridor -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">Quoridor game for LandTiger board</div>
+                                    <div class="text-sm muted mt-2">
+                                        Quoridor board game implemented for the LandTiger board, featuring multiplayer games (either on same board or via CAN),
+                                        and smart CPU-handled players.
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-c">C</span>
+                                        <span class="lang lang-asm">ASM</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="https://github.com/RonPlusSign/Quoridor-for-LandTiger" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- WorkStream -->
+                        <div class="project-card p-6 rounded-2xl card glass">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <div class="font-semibold themed-text">WorkStream: a mobile app for teamwork management</div>
+                                    <div class="text-sm muted mt-2">
+                                        An Android app to manage tasks and projects in real time within multiple teams,
+                                        featuring task assignment, deadlines, progress tracking, chats and notifications.
+                                    </div>
+                                    <div class="mt-4 flex gap-2">
+                                        <span class="lang lang-kotlin">Kotlin</span>
+                                        <span class="lang lang-android">Android</span>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col items-end gap-2">
+                                    <a href="https://github.com/RonPlusSign/WorkStream-task-manager" target="_blank" class="w-10 h-10 rounded-full flex items-center justify-center border border-white/8 glass btn-ghost" title="Open on GitHub">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.30.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="load-more-projects" class="hidden w-full mt-4 btn btn-ghost glass text-sm font-semibold" aria-expanded="false" aria-controls="projects-grid">
+                        Load more
+                    </button>
+                </div>
+            </section>
+            
+            <!-- CONTACT -->
+            <footer id="contact" class="pt-8 sm:pt-12 reveal">
+                <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center">
+                    <h2 class="text-xl sm:text-2xl font-bold mb-3 themed-text">Contact</h2>
+                    <p class="muted mb-4">Reach out for collaborations, opportunities, or to chat about AI & robotics.</p>
+                    <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+                        <a href="mailto:andrea.delli2001@gmail.com" class="btn btn-cta w-full sm:w-auto">Email me</a>
+                        <a href="https://github.com/RonPlusSign" target="_blank" class="btn btn-ghost w-full sm:w-auto">GitHub</a>
+                        <a href="https://www.linkedin.com/in/andrea-delli" target="_blank" class="btn btn-ghost w-full sm:w-auto">LinkedIn</a>
+                    </div>
+                    <p class="muted text-sm mt-6 pt-20 pb-6">
+                        © Andrea Delli, <span id="current-year"></span>. All rights reserved — <a href="assets/cv.pdf" target="_blank" class="underline themed-text">Download CV</a>
+                    </p>
+                </div>
+            </footer>
+        </main>
+
+        <!-- utility scripts -->
+        <!-- <script src="scripts.js"></script> -->
+        <script src="scripts.js"></script>
+    </body>
+</html>
